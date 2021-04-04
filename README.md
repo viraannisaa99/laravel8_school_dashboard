@@ -10,6 +10,7 @@ List:
 Contains: 
 - Laravel Roles & Permission (spatie/laravel-permission)
 - Laravel Datatables (yajra/llaravel-datatables-oracle)
+- Joins Table
 
 Project Setup:
 - composer install
