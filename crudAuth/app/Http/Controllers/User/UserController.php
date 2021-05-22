@@ -100,14 +100,14 @@ class UserController extends Controller
             $user = User::updateOrCreate(['id' => $request->id], $input);
             $user->assignRole($request->input('roles'));
 
-            // $email = $input['email'];
-            // $data = [
-            //     'title'    => "Please Change Your Deafault Password",
-            //     'url'      => "localhost:8000",
-            //     'name'     => $input['name'],
-            //     'password' => $password,
-            // ];
-            // Mail::to($email)->send(new SendMail($data));
+            $email = $input['email'];
+            $data = [
+                'title'    => "Please Change Your Deafault Password",
+                'url'      => "localhost:8000",
+                'name'     => $input['name'],
+                'password' => $password,
+            ];
+            Mail::to($email)->send(new SendMail($data));
 
             return response()->json(['success' => 'Added new user']);
         }
