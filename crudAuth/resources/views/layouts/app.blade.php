@@ -5,7 +5,10 @@
         @include('layouts.nav')
         <main class="py-4">
             <div class="container">
-            @yield('content')
+                @yield('content')
+            </div>
+            <div>
+                @include('layouts.modal')
             </div>
         </main>
     </div>

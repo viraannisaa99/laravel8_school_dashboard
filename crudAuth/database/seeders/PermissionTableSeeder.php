@@ -23,7 +23,11 @@ class PermissionTableSeeder extends Seeder
            'student-list',
            'student-create',
            'student-edit',
-           'student-delete'
+           'student-delete',
+           'user-list',
+           'user-create',
+           'user-edit',
+           'user-delete',
         ];
      
         foreach ($permissions as $permission) {

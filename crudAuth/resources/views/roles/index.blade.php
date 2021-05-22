@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('content')
 <div class="row">
     <div class="col-lg-12 margin-tb">
@@ -21,32 +20,71 @@
     </div>
 @endif
 
-<table class="table table-bordered">
-  <tr>
-     <th>No</th>
-     <th>Name</th>
-     <th width="280px">Action</th>
-  </tr>
-    @foreach ($roles as $key => $role)
-    <tr>
-        <td>{{ ++$i }}</td>
-        <td>{{ $role->name }}</td>
-        <td>
-            <a class="btn btn-info" href="{{ route('roles.show',$role->id) }}">Show</a>
-            @can('role-edit')
-                <a class="btn btn-primary" href="{{ route('roles.edit',$role->id) }}">Edit</a>
-            @endcan
-            @can('role-delete')
-                {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
-                    {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
-                {!! Form::close() !!}
-            @endcan
-        </td>
-    </tr>
-    @endforeach
+<table class="table table-bordered data-table" id="datatable">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
 </table>
-
-{!! $roles->render() !!}
-
-
 @endsection
+
+@push('scripts')
+<script type="text/javascript">
+    $(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        /**
+         * AJAX show datatable
+         */
+        var table = $('#datatable').DataTable({
+            responsive: true,
+            processing: true,
+            serverSide: true,
+
+            ajax: "{{ route('table.role') }}",
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                }, {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
+
+        /** 
+         * AJAX button delete
+        */
+        $('body').on('click', '.btn-delete', function() {
+            event.preventDefault();
+            var id = $(this).data("id");
+            var rt = "{{ route('roles.store') }}" + '/' + id;
+            confirm("Are You sure want to delete !");
+
+            $.ajax({
+                type: "DELETE",
+                url: rt,
+                success: function(data) {
+                    table.draw();
+                },
+                error: function(data) {
+                    console.log('Error:', data);
+                }
+            });
+        });
+    });
+</script>
+@endpush
