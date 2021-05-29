@@ -1,4 +1,4 @@
-# Laravel 8 CRUD & Auth
+# Laravel 8 Roles & Permission
 
 Case Study: School Dashboard
 
@@ -10,7 +10,6 @@ List:
 Contains: 
 - Laravel Roles & Permission (spatie/laravel-permission)
 - Laravel Datatables (yajra/llaravel-datatables-oracle)
-- Joins Table
 
 Project Setup:
 - composer install
