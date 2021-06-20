@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Permission;
 use DB;
 use DataTables;
 use Validator;
+use App\Http\Requests\RoleRequest;
 
 class RoleController extends Controller
 {
@@ -19,10 +20,9 @@ class RoleController extends Controller
      */
     function __construct()
     {
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:user-list|user-create|user-edit', ['only' => ['index', 'store']]);
+        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit', 'update', 'destroy']]);
     }
 
     /**
@@ -52,13 +52,8 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RoleRequest $request)
     {
-        $this->validate($request, [
-            'name'       => 'required|unique:roles,name',
-            'permission' => 'required',
-        ]);
-
         $role = Role::create(['name' => $request->input('name')]);
         $role->syncPermissions($request->input('permission'));
 
@@ -66,22 +61,6 @@ class RoleController extends Controller
             ->with('success', 'Role created successfully');
     }
 
-    // public function store(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'name'       => 'required|unique:roles,name',
-    //         'permission' => 'required',
-    //     ]);
-
-    //     if($validator->passes()){
-    //         $role = Role::updateOrCreate(['name' => $request->input('name')]);
-    //         $role->syncPermissions($request->input('permission'));
-
-    //         return response()->json(['success'=>'Added new roles']);
-    //     }
-
-    //     return response()->json(['error'=>$validator->errors()->all()]);
-    // }
     /**
      * Display the specified role.
      *
@@ -126,20 +105,22 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+/**
+     * Update the specified role in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(RoleRequest $request, $id)
     {
-        $this->validate($request, [
-            'name'       => 'required',
-            'permission' => 'required',
-        ]);
-
         $role           = Role::find($id);
         $role->name     = $request->input('name');
         $role->save();
         $role->syncPermissions($request->input('permission'));
 
         return redirect()->route('roles.index')
-                         ->with('success', 'Role updated successfully');
+            ->with('success', 'Role updated successfully');
     }
     /**
      * Remove the specified role from storage.

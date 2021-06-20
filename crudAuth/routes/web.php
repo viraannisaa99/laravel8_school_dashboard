@@ -33,3 +33,4 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/table/article', [ArticleController::class, 'dataTable'])->name('table.article');
 
 });
+

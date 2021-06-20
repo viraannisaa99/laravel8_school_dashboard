@@ -16,6 +16,7 @@ class AddDetailsToStudent extends Migration
         Schema::table('students', function (Blueprint $table) {
             $table->string('phone')->after('nim');
             $table->string('email')->after('phone');
+            $table->string('photo')->after('email');
         });
     }
 
@@ -26,8 +27,10 @@ class AddDetailsToStudent extends Migration
      */
     public function down()
     {
-        Schema::table('student', function (Blueprint $table) {
-            //
+        Schema::table('students', function (Blueprint $table) {
+            $table->dropColumn('phone');
+            $table->dropColumn('email');
+            $table->dropColumn('photo');
         });
     }
 }

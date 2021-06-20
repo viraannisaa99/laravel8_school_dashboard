@@ -18,10 +18,12 @@
                 <li><a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a></li>
                 <li><a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a></li>
                 @else
+                @if(Auth::user()->can('user-create'))
                 <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
-                @can('role-create')
+                @endif
+                @if(Auth::user()->can('user-create'))
                 <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
-                @endcan
+                @endif
                 <li><a class="nav-link" href="{{ route('students.index') }}">Manage Student</a></li>
                 <li><a class="nav-link" href="{{ route('articles.index') }}">Manage Article</a></li>
                 <li class="nav-item dropdown">

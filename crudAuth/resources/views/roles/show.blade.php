@@ -1,34 +1,33 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2> Show Role</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('roles.index') }}"> Back</a>
+
+<div class="row justify-content-md-center">
+    <div class="col-md-6">
+        <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+                <h3 class="profile-username text-center">{{ $role->name }}</h3>
+                <p class="text-muted text-center">Student</p>
+                <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item">
+                        <b>Permission: </b>
+                    </li>
+                    <li class="list-group-item">
+                        @if(!empty($rolePermissions))
+                        @foreach($rolePermissions as $v)
+                        <ul>
+                            <li>{{ $v->name }}</li>
+                        </ul>
+                        @endforeach
+                        @endif
+                    </li>
+                </ul>
+                <a href="{{ route('roles.index') }}" class="btn btn-primary btn-block"><b>Back</b></a>
+            </div>
+            <!-- /.card-body -->
         </div>
     </div>
 </div>
 
 
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Name:</strong>
-            {{ $role->name }}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Permissions:</strong>
-            @if(!empty($rolePermissions))
-                @foreach($rolePermissions as $v)
-                    <label class="label label-success">{{ $v->name }},</label>
-                @endforeach
-            @endif
-        </div>
-    </div>
-</div>
 @endsection

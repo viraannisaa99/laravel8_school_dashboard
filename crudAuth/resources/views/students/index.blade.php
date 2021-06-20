@@ -32,7 +32,7 @@
         <label for="name" class="col-sm-2 control-label">Name</label>
         <div class="col-sm-12">
             <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="" maxlength="50" required="">
-
+            <span class="error text-danger d-none"></span>
         </div>
     </div>
 
@@ -40,6 +40,7 @@
         <label class="col-sm-2 control-label">NIM</label>
         <div class="col-sm-12">
             <textarea id="nim" name="nim" placeholder="Enter NIM" class="form-control"></textarea>
+            <span class="error text-danger d-none"></span>
         </div>
     </div>
 
@@ -47,6 +48,7 @@
         <label for="phone" class="col-sm-2 control-label">Phone</label>
         <div class="col-sm-12">
             <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" value="" maxlength="50" required="">
+            <span class="error text-danger d-none"></span>
         </div>
     </div>
 
@@ -54,6 +56,7 @@
         <label for="email" class="col-sm-2 control-label">Email</label>
         <div class="col-sm-12">
             <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" value="" maxlength="50" required="">
+            <span class="error text-danger d-none"></span>
         </div>
     </div>
 
@@ -93,7 +96,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
         /**
          * AJAX show datatable
          */
@@ -101,7 +103,6 @@
             responsive: true,
             processing: true,
             serverSide: true,
-
             ajax: "{{ route('table.student') }}",
             columns: [{
                     data: 'id',
@@ -122,7 +123,6 @@
                 },
             ]
         });
-
         $('#createNewStudent').click(function() {
             $('#saveBtn').val("create-student");
             $('#id').val('');
@@ -130,7 +130,6 @@
             $('#modelHeading').html("Create New Student");
             $('#ajaxModel').modal('show');
         });
-
         $('body').on('click', '.editStudent', function() {
             event.preventDefault();
             var id = $(this).data('id');
@@ -147,11 +146,9 @@
                 $('#photo').attr(data.photo);
             })
         });
-
         $('#studentForm').submit(function(e) {
             e.preventDefault();
             let formData = new FormData(this);
-
             $.ajax({
                 data: formData,
                 url: "{{ route('students.store') }}",
@@ -172,7 +169,6 @@
                 },
             });
         });
-
         /** 
          * AJAX button delete
          */
@@ -181,7 +177,6 @@
             var id = $(this).data("id");
             var rt = "{{ route('students.store') }}" + '/' + id;
             confirm("Are You sure want to delete !");
-
             $.ajax({
                 type: "DELETE",
                 url: rt,
@@ -193,7 +188,6 @@
                 }
             });
         });
-
         function printErrorMsg (msg) {
             $(".print-error-msg").find("ul").html('');
             $(".print-error-msg").css('display','block');

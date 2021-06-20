@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class StudentFactory extends Factory
 {
@@ -27,7 +28,7 @@ class StudentFactory extends Factory
             'phone' => $this->faker->phoneNumber,
             'email' => $this->faker->email,
             'roomId' => $this->faker->numberBetween(1,6),
-            'photo' => $this->faker->imageUrl('public/student_photo',640,480, null, false)
+            'photo' => $this->faker->image('public/student_photo', 400, 300, null, false),
         ];
     }
 }

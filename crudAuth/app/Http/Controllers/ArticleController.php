@@ -11,10 +11,9 @@ class ArticleController extends Controller
 
     function __construct()
     {
-        $this->middleware('permission:student-list|student-create|student-edit|student-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:student-list|student-create|student-edit', ['only' => ['index', 'show']]);
         $this->middleware('permission:student-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:student-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:student-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:student-edit', ['only' => ['edit', 'update', 'destroy']]);
     }
 
     /**

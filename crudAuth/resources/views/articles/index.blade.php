@@ -8,7 +8,6 @@
             <tr>
                 <th>No</th>
                 <th>Title</th>
-                <th>Details</th>
                 <th width="280px">Action</th>
             </tr>
         </thead>
@@ -64,10 +63,6 @@
                 {
                     data: 'title',
                     name: 'title'
-                },
-                {
-                    data: 'detail',
-                    name: 'detail'
                 },
                 {
                     data: 'action',

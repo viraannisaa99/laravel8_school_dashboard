@@ -9,7 +9,7 @@ class Room extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'roomid';
+    protected $primaryKey = 'roomId';
 
     /**
      * The attributes that are mass assignable.

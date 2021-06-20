@@ -1,35 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2> Show Article</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('articles.index') }}"> Back</a>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Id:</strong>
-                {{ $article->id }}
+<div class="row justify-content-md-center">
+    <div class="col-md-9">
+        <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+                <h3 class="profile-username text-center">{{ $article->title }}</h3>
+                <p class="text-muted text-center">{{ $article->created_at }}</p>
+                <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item">
+                        {{ $article->detail }}
+                    </li>
+                </ul>
+                <a href="{{ route('roles.index') }}" class="btn btn-primary btn-block"><b>Back</b></a>
             </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Title:</strong>
-                {{ $article->title }}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>NIM:</strong>
-                {{ $article->detail }}
-            </div>
+            <!-- /.card-body -->
         </div>
     </div>
+</div>
+
 @endsection

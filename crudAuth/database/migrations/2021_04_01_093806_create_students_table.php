@@ -29,7 +29,7 @@ class CreateStudentsTable extends Migration
     public function down()
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->dropColumn('detail');
+            // $table->dropColumn('detail');
         });
     }
 }

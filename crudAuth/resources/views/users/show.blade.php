@@ -2,40 +2,38 @@
 
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2> Show User</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
+
+<div class="row justify-content-md-center">
+    <div class="col-md-6">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="card card-primary card-outline">
+                <div class="card-body box-profile">
+
+                    <h3 class="profile-username text-center">{{ $user->name }}</h3>
+                    <p class="text-muted text-center">Admin</p>
+                    <ul class="list-group list-group-unbordered mb-3">
+                        <li class="list-group-item">
+                            <b>Email</b> <a class="float-right">{{ $user->email }}</a>
+                        </li>
+                        <li class="list-group-item">
+                            <b>Roles</b>
+                            <a class="float-right">
+                                @if(!empty($user->getRoleNames()))
+                                @foreach($user->getRoleNames() as $v)
+                                <label class="badge badge-success">{{ $v }}</label>
+                                @endforeach
+                                @endif
+                            </a>
+                        </li>
+                    </ul>
+
+                    <a href="{{ route('users.index') }}" class="btn btn-primary btn-block"><b>Back</b></a>
+                </div>
+                <!-- /.card-body -->
+            </div>
         </div>
     </div>
 </div>
 
 
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Name:</strong>
-            {{ $user->name }}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Email:</strong>
-            {{ $user->email }}
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12">
-        <div class="form-group">
-            <strong>Roles:</strong>
-            @if(!empty($user->getRoleNames()))
-                @foreach($user->getRoleNames() as $v)
-                    <label class="badge badge-success">{{ $v }}</label>
-                @endforeach
-            @endif
-        </div>
-    </div>
-</div>
 @endsection

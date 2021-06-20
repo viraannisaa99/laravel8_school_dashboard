@@ -2,7 +2,9 @@
 
 @section('content')
 <div class="container">
+    @if(Auth::check('user-create'))
     <a class="btn btn-success" href="javascript:void(0)" id="createNewUser"> Create New User</a>
+    @endif
     <table class="table table-bordered data-table">
         <thead>
             <tr>
@@ -142,6 +144,7 @@
                 },
                 error: function(data) {
                     console.log('Error:', data);
+                    console.log(data);
                 }
             });
         });

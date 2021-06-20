@@ -13,17 +13,16 @@ use Illuminate\Support\Str;
 use DB;
 use Hash;
 use DataTables;
-use Validator;
+use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
 
     function __construct()
     {
-        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:user-list|user-create|user-edit', ['only' => ['index', 'show']]);
         $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit', 'update', 'destroy']]);
     }
 
     /**
@@ -31,9 +30,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(UserRequest $request)
     {
-        $roles = Role::pluck('name','name')->all();
+        $roles = Role::pluck('name', 'name')->all();
 
         return view('users.index', compact('roles'));
     }
@@ -43,11 +42,10 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function create()
-    // {
-    //     $roles = Role::pluck('name','name')->all();
-    //     return view('users.create',compact('roles'));
-    // }
+    public function create()
+    {
+        //
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -56,63 +54,26 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    // public function store(Request $request)
-    // {
-    //     $this->validate($request, [
-    //         'name'      => 'required',
-    //         'email'     => 'required|email|unique:users,email',
-    //         'roles'     => 'required'
-    //     ]);
 
-    //     $input = $request->all();
-    //     $password = Str::random(8);
-    //     $input['password'] = Hash::make($password);
-
-    //     $user = User::create($input);
-    //     $user->assignRole($request->input('roles'));
-
-    //     $email = $input['email'];
-    //     $data = [
-    //         'title'    => "Please Change Your Deafault Password",
-    //         'url'      => "localhost:8000",
-    //         'name'     => $input['name'],
-    //         'password' => $password,
-    //     ];
-    //     Mail::to($email)->send(new SendMail($data));
-
-    //     return redirect()->route('users.index')
-    //                      ->with('success','User created successfully');
-    // }
-
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'      => 'required',
-            'email'     => 'required|email|unique:users,email',
-            'roles'     => 'required'
-        ]);
+        $input = $request->all();
+        $password = Str::random(8);
+        $input['password'] = Hash::make($password);
 
-        if ($validator->passes()) {
-            $input = $request->all();
-            $password = Str::random(8);
-            $input['password'] = Hash::make($password);
+        $user = User::updateOrCreate(['id' => $request->id], $input);
+        $user->assignRole($request->input('roles'));
 
-            $user = User::updateOrCreate(['id' => $request->id], $input);
-            $user->assignRole($request->input('roles'));
+        $email = $input['email'];
+        $data = [
+            'title'    => "Please Change Your Deafault Password",
+            'url'      => "localhost:8000",
+            'name'     => $input['name'],
+            'password' => $password,
+        ];
+        Mail::to($email)->send(new SendMail($data));
 
-            $email = $input['email'];
-            $data = [
-                'title'    => "Please Change Your Deafault Password",
-                'url'      => "localhost:8000",
-                'name'     => $input['name'],
-                'password' => $password,
-            ];
-            Mail::to($email)->send(new SendMail($data));
-
-            return response()->json(['success' => 'Added new user']);
-        }
-
-        return response()->json(['error' => $validator->errors()->all()]);
+        return response()->json(['success' => 'Added new user']);
     }
 
     /**
@@ -136,10 +97,10 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name','name')->all();
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
 
-        return view('users.edit',compact('user','roles','userRole'));
+        return view('users.edit', compact('user', 'roles', 'userRole'));
     }
 
     /**
@@ -149,31 +110,24 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserRequest $request, $id)
     {
-        $this->validate($request, [
-            'name'      => 'required',
-            'email'     => 'required|email|unique:users,email,'.$id,
-            'password'  => 'same:confirm-password',
-            'roles'     => 'required'
-        ]);
-
         $input = $request->all();
-        if(!empty($input['password'])){ 
+        if (!empty($input['password'])) {
             $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = Arr::except($input,array('password'));    
+        } else {
+            $input = Arr::except($input, array('password'));
         }
 
         $user = User::find($id);
         $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)
-                                    ->delete();
+        DB::table('model_has_roles')->where('model_id', $id)
+            ->delete();
 
         $user->assignRole($request->input('roles'));
 
         return redirect()->route('users.index')
-                         ->with('success','User updated successfully');
+            ->with('success', 'User updated successfully');
     }
 
     /**

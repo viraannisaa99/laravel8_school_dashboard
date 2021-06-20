@@ -7,6 +7,7 @@ use App\Models\Room;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use DataTables;
+use App\Http\Requests\StudentRequest;
 use Validator;
 
 /**
@@ -17,10 +18,9 @@ class StudentController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:student-list|student-create|student-edit|student-delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:student-list|student-create|student-edit', ['only' => ['index', 'show']]);
         $this->middleware('permission:student-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:student-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:student-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:student-edit', ['only' => ['edit', 'update', 'destroy']]);
     }
 
     /**
@@ -52,33 +52,25 @@ class StudentController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function store(Request $request)
+    public function store(StudentRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'  => 'required',
-            'nim'   => 'required|min:10|max:10',
-            'phone' => 'required',
-            'email' => 'required|email',
-            'roomId' => 'required',
-            'photo' => 'mimes:jpg,bmp,png|max:1024',
-        ]);
+        $request->validate();
+        $input = $request->all();
 
-        if($validator->passes()){
-            $input = $request->all();
-            if ($photo = $request->file('photo')) {
-                $fileName       = Request()->nim . '.' . $photo->extension();
-                $photo->move(public_path('student_photo'), $fileName);
-                $input['photo'] = $fileName;
-            }else{
-                unset($input['photo']);
-            }
-
-            Student::updateOrCreate(['id' => $request->id], $input);
-            return response()->json(['success'=>'Added new student']);
+        if ($photo = $request->file('photo')) {
+            $fileName = $request->nim . '.' . $photo->extension();
+            $photo->move(public_path('student_photo'), $fileName);
+            $input['photo'] = $fileName;
+        } else {
+            unset($input['photo']);
         }
-        
-        return response()->json(['error'=>$validator->errors()->all()]);
+
+        Student::updateOrCreate(['id' => $request->id], $input);
+
+        return response()->json(['success' => 'Added new student']);
     }
+
+
 
     /**
      * Display the student details.
@@ -111,7 +103,7 @@ class StudentController extends Controller
      * @param  \App\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StudentRequest $request, $id)
     {
         //
     }
@@ -138,17 +130,17 @@ class StudentController extends Controller
         if ($request->ajax()) {
             $data = Student::latest()->get();
             return Datatables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($student){
-                        return view('students.action', [
-                            'student'       => $student,
-                            'url_show'      => route('students.show', $student->id),
-                            'url_edit'      => route('students.edit', $student->id),
-                            'url_destroy'   => route('students.destroy', $student->id)
-                        ]);
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+                ->addIndexColumn()
+                ->addColumn('action', function ($student) {
+                    return view('students.action', [
+                        'student'       => $student,
+                        'url_show'      => route('students.show', $student->id),
+                        'url_edit'      => route('students.edit', $student->id),
+                        'url_destroy'   => route('students.destroy', $student->id)
+                    ]);
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
     }
 }
