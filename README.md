@@ -3,9 +3,17 @@
 Case Study: School Dashboard
 
 List: 
-- CRUD Users
-- CRUD Roles
-- CRUD Student
+- Users
+- Roles
+- Students
+- Rooms
+- Articles
+
+Constraint: 
+- Users - Roles (one user only has one roles)
+- Roles - Permissions (one role can has many permissions)
+- Students - Rooms) (one student only has one room)
+- Users - Articles (one user can has many articles)
 
 Contains: 
 - Laravel Roles & Permission (spatie/laravel-permission)
