@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -24,7 +26,8 @@ class ArticleController extends Controller
 
     public function index()
     { 
-        return view('articles.index');
+        $users = User::all();
+        return view('articles.index', compact('users'));
     }
 
     public function dataTable(Request $request){
@@ -32,6 +35,9 @@ class ArticleController extends Controller
             $data = Article::latest()->get();
             return Datatables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('users', function (Article $article) {
+                        return $article->users->name;
+                    })
                     ->addColumn('action', function($article){
                         return view('articles.action', [
                             'article'       => $article,
@@ -64,7 +70,7 @@ class ArticleController extends Controller
     public function store(Request $request)
     {
         Article::updateOrCreate(['id' => $request->id],
-                                ['title' => $request->title, 'detail' => $request->detail]);
+                                ['title' => $request->title, 'detail' => $request->detail, 'userId' => Auth::user()->id]);
    
         return response()->json(['success'=>'Article saved successfully.']);
     }

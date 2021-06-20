@@ -8,6 +8,7 @@
             <tr>
                 <th>No</th>
                 <th>Title</th>
+                <th>User</th>
                 <th width="280px">Action</th>
             </tr>
         </thead>
@@ -32,6 +33,8 @@
             <textarea id="detail" name="detail" required="" placeholder="Enter Details" class="form-control"></textarea>
         </div>
     </div>
+
+    <input type="hidden" name="userId" id="userId">
 
     <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
@@ -65,6 +68,10 @@
                     name: 'title'
                 },
                 {
+                    data: 'users',
+                    name: 'users'
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,
@@ -91,6 +98,7 @@
                 $('#id').val(data.id);
                 $('#title').val(data.title);
                 $('#detail').val(data.detail);
+                $('#userId').val(data.userId);
             })
         });
 

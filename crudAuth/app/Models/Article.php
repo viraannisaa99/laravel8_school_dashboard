@@ -10,6 +10,11 @@ class Article extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'detail'
+        'title', 'detail', 'userId'
     ];
+
+    public function users()
+    {
+        return $this->belongsTo('App\Models\User', 'userId');
+    }
 }
