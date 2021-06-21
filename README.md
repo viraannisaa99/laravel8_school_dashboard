@@ -15,7 +15,7 @@ Constraint:
 - Students - Rooms) (one student only has one room)
 - Users - Articles (one user can has many articles)
 
-Contains: 
+Used Packages: 
 - Laravel Roles & Permission (spatie/laravel-permission)
 - Laravel Datatables (yajra/llaravel-datatables-oracle)
 
