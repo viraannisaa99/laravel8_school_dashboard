@@ -28,6 +28,7 @@ Project Setup:
 
 
 Login: 
-Email: admin1@gmail.com, 
-Password: 123456
+
+- Email: admin1@gmail.com, 
+- Password: 123456
  
