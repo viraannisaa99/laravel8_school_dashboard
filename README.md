@@ -24,3 +24,10 @@ Project Setup:
 - cp .env.example .env
 - php artisan key:generate
 - php artisan migrate --seed
+- For use the test mail feature, sign up to Mailtrap.io then copy the SMTP setting to your .env and fill your email in MAIL_FROM_ADDRESS. 
+
+
+Login: 
+Email: admin1@gmail.com, 
+Password: 123456
+ 
