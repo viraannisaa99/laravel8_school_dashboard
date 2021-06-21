@@ -8,8 +8,9 @@ use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ArticleRequest;
+use App\Http\Controllers\Response\ResponseController as ResponseController;
 
-class ArticleController extends Controller
+class ArticleController extends ResponseController
 {
 
     function __construct()
@@ -76,16 +77,10 @@ class ArticleController extends Controller
 
         $article = Article::updateOrCreate(['id' => $request->id], $input);
 
-        if ($article) {
-            return response()->json(([
-                'status' => true,
-                'msg' => 'Article saved successfully'
-            ]));
-        } else {
-            return response()->json(([
-                'status' => false,
-                'msg' => 'Failed'
-            ]));
+        if($article){
+            return $this->sendResponse($article, 'Article retrieved successfully.');
+        }else{
+            return $this->sendError($article, 'Failed');
         }
     }
 
@@ -135,6 +130,6 @@ class ArticleController extends Controller
     {
         Article::find($id)->delete();
 
-        return response()->json(['success' => 'Article deleted successfully.']);
+        return $this->sendResponse([], 'Article deleted successfully.');
     }
 }

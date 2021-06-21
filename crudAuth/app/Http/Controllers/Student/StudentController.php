@@ -9,12 +9,13 @@ use App\Models\Student;
 use DataTables;
 use App\Http\Requests\StudentRequest;
 use App\Http\Traits\ImageTrait;
+use App\Http\Controllers\Response\ResponseController as ResponseController;
 
 /**
  * For this class I tried to use datatables because I need the search bar
  */
 
-class StudentController extends Controller
+class StudentController extends ResponseController
 {
     use ImageTrait;
 
@@ -57,19 +58,18 @@ class StudentController extends Controller
     public function store(StudentRequest $request)
     {
         $input = $request->all();
-        $file_name = $this->saveImage($input['nim'], $request->file('photo'));
-
-        if ($request->file('photo')) {
-            $input['photo'] = $file_name;
+        
+        if ($photo = $request->file('photo')) {
+            $input['photo'] = $this->saveImage($input['nim'], $photo);
         } else {
             unset($input['photo']);
         }
 
         $student = Student::updateOrCreate(['id' => $request->id], $input);
-        if ($student) {
-            return response()->json((['status' => true, 'msg' => 'Added new student']));
-        } else {
-            return response()->json((['status' => false, 'msg' => 'Failed']));
+        if($student){
+            return $this->sendResponse($student, 'Student retrieved successfully.');
+        }else{
+            return $this->sendError($student, 'Failed');
         }
     }
 
@@ -118,7 +118,7 @@ class StudentController extends Controller
     public function destroy($id)
     {
         Student::find($id)->delete();
-        return response()->json(['success' => 'Student deleted successfully.']);
+        return $this->sendResponse([], 'Student deleted successfully.');
     }
 
     /**

@@ -14,8 +14,9 @@ use DB;
 use Hash;
 use DataTables;
 use App\Http\Requests\UserRequest;
+use App\Http\Controllers\Response\ResponseController as ResponseController;
 
-class UserController extends Controller
+class UserController extends ResponseController
 {
 
     function __construct()
@@ -74,15 +75,9 @@ class UserController extends Controller
         Mail::to($email)->send(new SendMail($data));
 
         if($user){
-            return response()->json(([
-                'status' => true,
-                'msg' => 'Added new user'
-            ]));
+            return $this->sendResponse($user, 'User retrieved successfully.');
         }else{
-            return response()->json(([
-                'status' => false,
-                'msg' => 'Failed'
-            ]));
+            return $this->sendError($user, 'Failed');
         }
     }
 
@@ -149,8 +144,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         User::find($id)->delete();
-        return redirect()->route('users.index')
-            ->with('success', 'User deleted successfully');
+        
+        return $this->sendResponse([], 'User deleted successfully.');
     }
 
     public function dataTable(Request $request)
