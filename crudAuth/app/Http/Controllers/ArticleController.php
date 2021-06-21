@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ArticleRequest;
 
 class ArticleController extends Controller
 {
@@ -25,29 +26,30 @@ class ArticleController extends Controller
      */
 
     public function index()
-    { 
+    {
         $users = User::all();
         return view('articles.index', compact('users'));
     }
 
-    public function dataTable(Request $request){
+    public function dataTable(Request $request)
+    {
         if ($request->ajax()) {
             $data = Article::latest()->get();
             return Datatables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('users', function (Article $article) {
-                        return $article->users->name;
-                    })
-                    ->addColumn('action', function($article){
-                        return view('articles.action', [
-                            'article'       => $article,
-                            'url_show'      => route('articles.show', $article->id),
-                            'url_edit'      => route('articles.edit', $article->id),
-                            'url_destroy'   => route('articles.destroy', $article->id)
-                        ]);
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+                ->addIndexColumn()
+                ->addColumn('users', function (Article $article) {
+                    return $article->users->name;
+                })
+                ->addColumn('action', function ($article) {
+                    return view('articles.action', [
+                        'article'       => $article,
+                        'url_show'      => route('articles.show', $article->id),
+                        'url_edit'      => route('articles.edit', $article->id),
+                        'url_destroy'   => route('articles.destroy', $article->id)
+                    ]);
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
     }
 
@@ -67,12 +69,24 @@ class ArticleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        Article::updateOrCreate(['id' => $request->id],
-                                ['title' => $request->title, 'detail' => $request->detail, 'userId' => Auth::user()->id]);
-   
-        return response()->json(['success'=>'Article saved successfully.']);
+        $input = $request->all();
+        $input['userId'] = Auth::user()->id;
+
+        $article = Article::updateOrCreate(['id' => $request->id], $input);
+
+        if ($article) {
+            return response()->json(([
+                'status' => true,
+                'msg' => 'Article saved successfully'
+            ]));
+        } else {
+            return response()->json(([
+                'status' => false,
+                'msg' => 'Failed'
+            ]));
+        }
     }
 
     /**
@@ -120,7 +134,7 @@ class ArticleController extends Controller
     public function destroy($id)
     {
         Article::find($id)->delete();
-     
-        return response()->json(['success'=>'Article deleted successfully.']);
+
+        return response()->json(['success' => 'Article deleted successfully.']);
     }
 }

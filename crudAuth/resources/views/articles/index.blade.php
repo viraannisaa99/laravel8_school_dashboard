@@ -24,6 +24,7 @@
         <label for="title" class="col-sm-2 control-label">Title</label>
         <div class="col-sm-12">
             <input type="text" class="form-control" id="title" name="title" placeholder="Enter Title" value="" maxlength="50" required="">
+            <small id="title_error" class="form-text text-danger"></small>
         </div>
     </div>
 
@@ -31,6 +32,7 @@
         <label class="col-sm-2 control-label">Details</label>
         <div class="col-sm-12">
             <textarea id="detail" name="detail" required="" placeholder="Enter Details" class="form-control"></textarea>
+            <small id="detail_error" class="form-text text-danger"></small>
         </div>
     </div>
 
@@ -104,6 +106,8 @@
 
         $('#saveBtn').click(function(e) {
             e.preventDefault();
+            $('#title_error').text('');
+            $('#detail_error').text('');
             $(this).html('Save');
 
             $.ajax({
@@ -112,15 +116,18 @@
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
-
-                    $('#articleForm').trigger("reset");
-                    $('#ajaxModel').modal('hide');
-                    table.draw();
-
+                    if (data.status == true) {
+                        alert('Success!');
+                        $('#articleForm').trigger("reset");
+                        $('#ajaxModel').modal('hide');
+                        table.draw();
+                    }
                 },
-                error: function(data) {
-                    console.log('Error:', data);
-                    $('#saveBtn').html('Save Changes');
+                error: function(reject) {
+                    var response = $.parseJSON(reject.responseText);
+                    $.each(response.errors, function(key, val) {
+                        $("#" + key + "_error").text(val[0]);
+                    })
                 }
             });
         });

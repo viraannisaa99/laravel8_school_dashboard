@@ -23,40 +23,36 @@
 
     {{ csrf_field() }}
 
-    <div class="alert alert-danger print-error-msg" style="display:none">
-        <ul></ul>
-    </div>
-
     <input type="hidden" name="id" id="id">
     <div class="form-group">
         <label for="name" class="col-sm-2 control-label">Name</label>
         <div class="col-sm-12">
-            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="" maxlength="50" required="">
-            <span class="error text-danger d-none"></span>
+            <input type="text" class="form-control" id="name" name="name" value="" maxlength="50" required="">
+            <small id="name_error" class="form-text text-danger"></small>
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-sm-2 control-label">NIM</label>
         <div class="col-sm-12">
-            <textarea id="nim" name="nim" placeholder="Enter NIM" class="form-control"></textarea>
-            <span class="error text-danger d-none"></span>
+            <textarea id="nim" name="nim" class="form-control"></textarea>
+            <small id="nim_error" class="form-text text-danger"></small>
         </div>
     </div>
 
     <div class="form-group">
         <label for="phone" class="col-sm-2 control-label">Phone</label>
         <div class="col-sm-12">
-            <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" value="" maxlength="50" required="">
-            <span class="error text-danger d-none"></span>
+            <input type="text" class="form-control" id="phone" name="phone" value="" maxlength="50" required="">
+            <small id="phone_error" class="form-text text-danger"></small>
         </div>
     </div>
 
     <div class="form-group">
         <label for="email" class="col-sm-2 control-label">Email</label>
         <div class="col-sm-12">
-            <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" value="" maxlength="50" required="">
-            <span class="error text-danger d-none"></span>
+            <input type="text" class="form-control" id="email" name="email" value="" maxlength="50" required="">
+            <small id="email_error" class="form-text text-danger"></small>
         </div>
     </div>
 
@@ -148,6 +144,10 @@
         });
         $('#studentForm').submit(function(e) {
             e.preventDefault();
+            $('#name_error').text('');
+            $('#nim_error').text('');
+            $('#phone_error').text('');
+            $('#email_error').text('');
             let formData = new FormData(this);
             $.ajax({
                 data: formData,
@@ -158,15 +158,19 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    if($.isEmptyObject(data.error)){
-                        alert(data.success);
+                    if (data.status == true) {
+                        alert('Success!');
                         $('#studentForm').trigger("reset");
                         $('#ajaxModel').modal('hide');
                         table.draw();
-                    }else{
-                        printErrorMsg(data.error);
                     }
                 },
+                error: function(reject) {
+                    var response = $.parseJSON(reject.responseText);
+                    $.each(response.errors, function(key, val) {
+                        $("#" + key + "_error").text(val[0]);
+                    })
+                }
             });
         });
         /** 
@@ -188,13 +192,6 @@
                 }
             });
         });
-        function printErrorMsg (msg) {
-            $(".print-error-msg").find("ul").html('');
-            $(".print-error-msg").css('display','block');
-            $.each( msg, function( key, value ) {
-                $(".print-error-msg").find("ul").append('<li>'+value+'</li>');
-            });
-        }
     });
 </script>
 

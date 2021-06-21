@@ -73,7 +73,17 @@ class UserController extends Controller
         ];
         Mail::to($email)->send(new SendMail($data));
 
-        return response()->json(['success' => 'Added new user']);
+        if($user){
+            return response()->json(([
+                'status' => true,
+                'msg' => 'Added new user'
+            ]));
+        }else{
+            return response()->json(([
+                'status' => false,
+                'msg' => 'Failed'
+            ]));
+        }
     }
 
     /**

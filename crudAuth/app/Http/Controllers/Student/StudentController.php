@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Student;
 use DataTables;
 use App\Http\Requests\StudentRequest;
-use Validator;
+use App\Http\Traits\ImageTrait;
 
 /**
  * For this class I tried to use datatables because I need the search bar
@@ -16,6 +16,8 @@ use Validator;
 
 class StudentController extends Controller
 {
+    use ImageTrait;
+
     function __construct()
     {
         $this->middleware('permission:student-list|student-create|student-edit', ['only' => ['index', 'show']]);
@@ -54,23 +56,22 @@ class StudentController extends Controller
 
     public function store(StudentRequest $request)
     {
-        $request->validate();
         $input = $request->all();
+        $file_name = $this->saveImage($input['nim'], $request->file('photo'));
 
-        if ($photo = $request->file('photo')) {
-            $fileName = $request->nim . '.' . $photo->extension();
-            $photo->move(public_path('student_photo'), $fileName);
-            $input['photo'] = $fileName;
+        if ($request->file('photo')) {
+            $input['photo'] = $file_name;
         } else {
             unset($input['photo']);
         }
 
-        Student::updateOrCreate(['id' => $request->id], $input);
-
-        return response()->json(['success' => 'Added new student']);
+        $student = Student::updateOrCreate(['id' => $request->id], $input);
+        if ($student) {
+            return response()->json((['status' => true, 'msg' => 'Added new student']));
+        } else {
+            return response()->json((['status' => false, 'msg' => 'Failed']));
+        }
     }
-
-
 
     /**
      * Display the student details.

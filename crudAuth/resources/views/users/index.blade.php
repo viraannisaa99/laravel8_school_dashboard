@@ -34,10 +34,12 @@
     <div class="form-group">
         <strong>Name:</strong>
         {!! Form::text('name', null, array('placeholder' => 'Name','class' => 'form-control')) !!}
+        <small id="name_error" class="form-text text-danger"></small>
     </div>
     <div class="form-group">
         <strong>Email:</strong>
         {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control')) !!}
+        <small id="email_error" class="form-text text-danger"></small>
     </div>
     <div class="form-group">
         <strong>Role:</strong>
@@ -105,6 +107,8 @@
 
         $('#saveBtn').click(function(e) {
             e.preventDefault();
+            $('#name_error').text('');
+            $('#email_error').text('');
             $(this).html('Save');
 
             $.ajax({
@@ -113,16 +117,19 @@
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
-                    if($.isEmptyObject(data.error)){
-                        alert(data.success);
+                    if (data.status == true) {
+                        alert('Success!');
                         $('#userForm').trigger("reset");
                         $('#ajaxModel').modal('hide');
                         table.draw();
-                    }else{
-                        printErrorMsg(data.error);
                     }
-
                 },
+                error: function(reject) {
+                    var response = $.parseJSON(reject.responseText);
+                    $.each(response.errors, function(key, val) {
+                        $("#" + key + "_error").text(val[0]);
+                    })
+                }
                 
             });
         });
@@ -149,13 +156,6 @@
             });
         });
 
-        function printErrorMsg (msg) {
-            $(".print-error-msg").find("ul").html('');
-            $(".print-error-msg").css('display','block');
-            $.each( msg, function( key, value ) {
-                $(".print-error-msg").find("ul").append('<li>'+value+'</li>');
-            });
-        }
     });
 </script>
 @endpush

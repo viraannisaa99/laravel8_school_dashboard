@@ -4,9 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StudentRequest extends FormRequest
+class ArticleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +25,8 @@ class StudentRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'  => 'required',
-            'nim'   => 'required|min:10|max:10',
-            'phone' => 'required',
-            'email' => 'required|email',
-            'roomId' => 'required',
-            'photo' => 'mimes:jpg,bmp,png|max:1024',
+            'title' => 'required',
+            'detail' => 'required',
         ];
     }
 }
